@@ -55,13 +55,13 @@ io.on("connection", (socket) => {
         socket.emit("usersList", users);
     });
 
-    socket.on("closeRoom", ({ username }) => {
-        users.find((user) => {
-            if (user.username === username) {
-                socket.leave(user.room);
-                users.splice(users.indexOf(user), 1);
-            }
-        });
+    socket.on("closeRoom", ({ username, room }) => {
+        const i = JSON.stringify(users.findIndex((val) => val.username === username));
+
+        socket.leave(room);
+        users.splice(Number(i), 1);
+
+        io.emit("usersList", users);
     });
 
     socket.on("sendChoice", (data) => {
