@@ -34,7 +34,7 @@ io.on("connection", (socket) => {
             };
             users.push(user);
             socket.join(user.room);
-        } else if (users.length > 0) {
+        } else if (users.length > 0 && users.length < 4) {
             user = {
                 id: socket.id,
                 username,
