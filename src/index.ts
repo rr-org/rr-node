@@ -26,7 +26,7 @@ io.on("connection", (socket) => {
     socket.on("joinRoom", ({ username }) => {
         let user;
 
-        if (users.length === 0 || users.length === 4) {
+        if (users.length === 0 || users.length === 5) {
             user = {
                 id: socket.id,
                 username,
@@ -34,7 +34,7 @@ io.on("connection", (socket) => {
             };
             users.push(user);
             socket.join(user.room);
-        } else if (users.length > 0 && users.length < 4) {
+        } else if (users.length > 0 && users.length < 5) {
             user = {
                 id: socket.id,
                 username,
@@ -46,10 +46,10 @@ io.on("connection", (socket) => {
             user = {
                 id: socket.id,
                 username,
-                room: users[4].room,
+                room: users[5].room,
             };
             users.push(user);
-            socket.join(users[4].room);
+            socket.join(users[5].room);
         }
         socket.broadcast.emit("usersList", users);
         socket.emit("usersList", users);
