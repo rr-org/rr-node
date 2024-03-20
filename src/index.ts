@@ -2,27 +2,25 @@ import express from "express";
 import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
-
-interface Users {
-    id: string;
-    username: string;
-    room: string;
-}
+import { IUsers } from "./utils/type";
+import { countdown } from "./utils/countdown";
 
 const app = express();
 const server = http.createServer(app);
 app.use(cors());
 
-const io = new Server(server, {
+export const io = new Server(server, {
     cors: {
         origin: "http://localhost:5173",
         methods: ["GET", "POST"],
     },
 });
 
-const users: Users[] = [];
+export const users: IUsers[] = [];
+
 
 io.on("connection", (socket) => {
+
     socket.on("joinRoom", ({ username }) => {
         let user;
 
@@ -34,6 +32,7 @@ io.on("connection", (socket) => {
             };
             users.push(user);
             socket.join(user.room);
+            countdown(user.room);
         } else if (users.length > 0 && users.length < 5) {
             user = {
                 id: socket.id,
@@ -55,7 +54,11 @@ io.on("connection", (socket) => {
         socket.emit("usersList", users);
     });
 
-    socket.on("closeRoom", ({ username, room }) => {
+    socket.on("sendAnswer", (data) => {
+        io.to(data.room).emit("receiveAnswer", data);
+    });
+
+    socket.on("leaveRoom", ({ username, room }) => {
         const i = JSON.stringify(users.findIndex((val) => val.username === username));
 
         socket.leave(room);
@@ -63,12 +66,8 @@ io.on("connection", (socket) => {
 
         io.emit("usersList", users);
     });
-
-    socket.on("sendChoice", (data) => {
-        io.to(data.room).emit("receiveChoice", data);
-    });
 });
 
-server.listen(3000, () => {
+server.listen(3210, () => {
     console.log("Server is running!");
 });
