@@ -1,4 +1,4 @@
-import { io, users } from "../server";
+import { io, users } from "../index";
 import { getQuiz } from "./getQuiz";
 import { IQuiz } from "./type";
 
