@@ -30,15 +30,18 @@ io.on("connection", (socket) => {
                 username,
                 room: socket.id,
             };
+
             users.push(user);
             socket.join(user.room);
             countdown(user.room);
+
         } else if (users.length > 0 && users.length < 5) {
             user = {
                 id: socket.id,
                 username,
                 room: users[0].room,
             };
+
             users.push(user);
             socket.join(users[0].room);
         } else {
@@ -47,9 +50,11 @@ io.on("connection", (socket) => {
                 username,
                 room: users[5].room,
             };
+
             users.push(user);
             socket.join(users[5].room);
         }
+        
         socket.broadcast.emit("usersList", users);
         socket.emit("usersList", users);
     });
